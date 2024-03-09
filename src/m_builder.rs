@@ -55,24 +55,37 @@ impl Default for EmployeeBuilder {
 }
 
 impl EmployeeBuilder {
-	pub fn name(self, name: String) -> Self {
-		todo!("finish the implementation.");
+	pub fn name(mut self, name: String) -> Self {
+		self.name = Some(name);
+		self
 	}
 
-	pub fn uid(self, uid: u32) -> Self {
-		todo!("finish the implementation.");
+	pub fn uid(mut self, uid: u32) -> Self {
+		self.uid = Some(uid);
+		self
 	}
 
-	pub fn experience(self, experience: u32) -> Self {
-		todo!("finish the implementation.");
+	pub fn experience(mut self, experience: u32) -> Self {
+		self.experience = experience;
+		self
 	}
 
-	pub fn wage(self, wage: u32) -> Self {
-		todo!("finish the implementation.");
+	pub fn wage(mut self, wage: u32) -> Self {
+		self.wage = wage;
+		self
 	}
 
 	pub fn build(self) -> Result<Employee, ()> {
-		todo!("finish the implementation.");
+		if self.name.is_none() || self.uid.is_none() {
+            Err(())
+        } else {
+            Ok(Employee {
+                name: self.name.unwrap(),
+                uid: self.uid.unwrap(),
+                experience: self.experience,
+                wage: self.wage,
+            })
+        }
 	}
 }
 
@@ -91,6 +104,17 @@ impl EmployeeBuilder {
 pub struct Named {
 	name: String,
 }
+
+pub trait GetName {
+    fn get_name(&self) -> String;
+}
+
+impl GetName for Named {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 /// A unique type explicitly representing an employee that NOT has been named.
 pub struct NotNamed;
 
@@ -100,6 +124,16 @@ pub struct Identified {
 }
 /// A unique type explicitly representing an employee that has NOT been identified.
 pub struct UnIdentified;
+
+pub trait GetUID {
+    fn get_uid(&self) -> u32;
+}
+
+impl GetUID for Identified {
+    fn get_uid(&self) -> u32 {
+        self.uid.clone()
+    }
+}
 
 /// A new builder that uses the "type-state" pattern to ensure that the user has set the name and
 /// uid. The main trick here is that instead of having `name` be represented by `Option<String>`, we
@@ -156,25 +190,51 @@ impl Default for TypedEmployeeBuilder<NotNamed, UnIdentified> {
 	}
 }
 
-impl<Name, Id> TypedEmployeeBuilder<Name, Id> {
-	pub fn name(self, name: String) -> Self {
-		todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+impl<Id> TypedEmployeeBuilder<NotNamed, Id> {
+	pub fn name(self, name: String) -> TypedEmployeeBuilder<Named, Id>  {
+		// todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+		TypedEmployeeBuilder {
+            experience: self.experience,
+            wage: self.wage,
+            name: Named { name },
+            uid: self.uid,
+        }
+	}
+}
+
+impl<Name> TypedEmployeeBuilder<Name, UnIdentified> {
+	pub fn uid(self, uid: u32) -> TypedEmployeeBuilder<Name, Identified> {
+		// todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+		TypedEmployeeBuilder {
+            experience: self.experience,
+            wage: self.wage,
+            name: self.name,
+            uid: Identified { uid },
+        }
+	}
+}
+
+impl<Named: GetName, Identified: GetUID> TypedEmployeeBuilder<Named, Identified> {
+	pub fn experience(mut self, experience: u32) -> Self {
+		// todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+		self.experience = experience;
+		self
 	}
 
-	pub fn uid(self, uid: u32) -> Self {
-		todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
-	}
-
-	pub fn experience(self, experience: u32) -> Self {
-		todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
-	}
-
-	pub fn wage(self, wage: u32) -> Self {
-		todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+	pub fn wage(mut self, wage: u32) -> Self {
+		// todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+		self.wage = wage;
+		self
 	}
 
 	pub fn build(self) -> Employee {
-		todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+		// todo!("finish the implementation. Note that you might need to move some of these functions to a new `impl` blocks with different trait bounds, or change the return type to use `Named` etc.");
+		Employee {
+            name: self.name.get_name(),
+            uid: self.uid.get_uid(),
+            experience: self.experience,
+            wage: self.wage,
+        }
 	}
 }
 

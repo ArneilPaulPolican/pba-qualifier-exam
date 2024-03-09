@@ -6,22 +6,50 @@
 
 /// Returns true if the last two strings in the vector start with `PBA`.
 pub fn match_1(input: Vec<String>) -> bool {
-	todo!();
+	let input_len: usize = input.len();
+
+	match input_len {
+        input_len if input_len > 1 => {
+            let first_pba_str: &String = &input[input.len() - 1];
+            let second_pba_str: &String = &input[input.len() - 2];
+
+            if first_pba_str.starts_with("PBA") && second_pba_str.starts_with("PBA") { true } 
+			else { false }
+        },
+        _ => { false }
+    }
 }
 
 /// Returns true if the first and last string in the vector start with `PBA`.
 pub fn match_2(input: Vec<String>) -> bool {
-	todo!();
+	let input_len: usize = input.len();
+
+    match input_len {
+        input_len if input_len > 0 => {
+            let first_pba_str: &String = &input[0];
+            let second_pba_str: &String = &input[input.len() - 1];
+			
+            if first_pba_str.starts_with("PBA") && second_pba_str.starts_with("PBA") { true } 
+			else { false }
+        },
+        _ => { false }
+    }
 }
 
 /// Returns true if the first item in `input` is true.
 pub fn match_3(input: (bool, bool, bool)) -> bool {
-	todo!();
+	match input.0 {
+        true => true,
+        _ => false,
+    }
 }
 
 /// Returns true if the input is `Ok(x)` of some even `x`.
 pub fn match_4(input: Result<u32, &'static str>) -> bool {
-	todo!();
+	match input {
+        Ok(value) => true,
+        _ => false, 
+    }
 }
 
 /// This function is not graded. It is just for collecting feedback.

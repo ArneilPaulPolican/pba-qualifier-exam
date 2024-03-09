@@ -18,11 +18,22 @@ pub struct Employee {
 	pub uid: u32,
 }
 
+impl Employee {
+    pub fn new(name: String, experience: u32, wage: u32, uid: u32) -> Self {
+        Employee {
+            name,
+            experience,
+            wage,
+            uid
+        }
+    }
+}
+
 // We want to consider two employee instances equal iff they have the same `uid`.
 
 impl PartialEq for Employee {
 	fn eq(&self, other: &Self) -> bool {
-		todo!("complete the implementation");
+		self.uid == other.uid
 	}
 }
 impl Eq for Employee {}
@@ -34,13 +45,21 @@ impl Eq for Employee {}
 
 impl PartialOrd for Employee {
 	fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-		todo!("complete the implementation");
+		match self.uid.cmp(&other.uid) {
+		    std::cmp::Ordering::Equal => {
+				let _self: f64 = (self.experience as f64) / (self.wage as f64);
+				let _other: f64 = (other.experience as f64) / (other.wage as f64);
+		
+				_self.partial_cmp(&_other).map(std::cmp::Ordering::from)
+			},
+			other => Some(other),
+		}
 	}
 }
 
 impl Ord for Employee {
 	fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-		todo!("complete the implementation");
+		self.partial_cmp(other).unwrap()
 	}
 }
 
@@ -59,14 +78,25 @@ impl TryFrom<String> for Employee {
 	type Error = &'static str;
 
 	fn try_from(value: String) -> Result<Self, Self::Error> {
-		todo!("complete the implementation");
+		let props: Vec<&str> = value.split(',').map(str::trim).collect();
+		
+        if props.len() == 4 {
+            Ok(Employee {
+                name: String::from(props[0]),
+                experience: props[1].parse().map_err(|_| "Error: Invalid experience")?,
+                wage: props[2].parse().map_err(|_| "Error: Invalid wage")?,
+                uid: props[3].parse().map_err(|_| "Error: Invalid UID")?,
+            })
+        } else {
+            Err("Error: Invalid string")
+        }
 	}
 }
 
 // We also want to convert employees back into strings in the same format as above.
 impl From<Employee> for String {
 	fn from(e: Employee) -> Self {
-		todo!("complete the implementation");
+		format!("{}, {}, {}, {}", e.name, e.experience, e.wage, e.uid)
 	}
 }
 

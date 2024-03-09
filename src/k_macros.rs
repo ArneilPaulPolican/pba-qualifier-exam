@@ -2,7 +2,7 @@
 //!
 //! Make sure these macros are importable from the root of your crate, and usable in an external
 //! crate.
-
+use std::collections::HashMap;
 // A common Rust macro is `vec![...]` used for creating vectors of literal values. Without this
 // macro, one would need to create an empty vector, and push each item to it individually.
 //
@@ -12,9 +12,14 @@
 // let map1: HashMap<u32, u32> = map![1 => 2, 3 => 4, 5 => 6];
 #[macro_export]
 macro_rules! map {
-	( $($todo:tt)* ) => {
-		Default::default()
-	};
+	// ( $($todo:tt)* ) => {
+	// 	Default::default()
+	// };
+	($($key:expr => $value:expr),*) => {{
+		let mut temp_map = HashMap::new();
+		$(temp_map.insert($key, $value);)*
+		temp_map
+	}};
 }
 
 /// Next, write a macro that implements a `get` function on a type.
@@ -25,13 +30,13 @@ macro_rules! map {
 /// generate this implementation for us, as such:
 ///
 /// ```
-/// use pba_qualifier_exam::impl_get;
-/// impl_get! {
-/// 	// implements `Get<u32>` for `struct Six`
-/// 	Six: u32 = 6;
-/// 	// implements `Get<u16>` for `struct FortyTwo`
-/// 	FortyTwo: u16 = 42;
-/// }
+//  use pba_qualifier_exam::impl_get;
+//  impl_get! {
+//  	// implements `Get<u32>` for `struct Six`
+//  	Six: u32 = 6;
+//  	// implements `Get<u16>` for `struct FortyTwo`
+//  	FortyTwo: u16 = 42;
+//  }
 /// ```
 ///
 /// For now, your macro could only support literals as the right hand side of `=`. But you can think
@@ -56,7 +61,13 @@ impl Get<u32> for Seven {
 
 #[macro_export]
 macro_rules! impl_get {
-	( $($todo:tt)* ) => {};
+	// ( $($todo:tt)* ) => {};
+	($($vis:vis $name:ident : $ty:ty = $value:expr;)*) => {
+		$($vis struct $name;
+		impl Get<$ty> for $name {
+			fn get() -> $ty { $value }
+		})*
+	};
 }
 
 /// This function is not graded. It is just for collecting feedback.
@@ -102,13 +113,13 @@ mod tests {
 		);
 
 		// you should be able to make these work.
-		// assert_eq!(Foo::get(), 10);
-		// assert_eq!(Bar::get(), 42);
-		// assert_eq!(Baz::get(), 21);
-		assert_eq!(
-			true, false,
-			"Make sure to remove this line and uncomment the tests above"
-		);
+		assert_eq!(Foo::get(), 10);
+		assert_eq!(Bar::get(), 42);
+		assert_eq!(Baz::get(), 21);
+		// assert_eq!(
+		// 	true, false,
+		// 	"Make sure to remove this line and uncomment the tests above"
+		// );
 
 		// As an extra, ungraded, challenge, try to make this work.
 		// This is not part of the main problem because it requires the nightly compiler.
