@@ -2,7 +2,7 @@
 //!
 //! Make sure these macros are importable from the root of your crate, and usable in an external
 //! crate.
-use std::collections::HashMap;
+
 // A common Rust macro is `vec![...]` used for creating vectors of literal values. Without this
 // macro, one would need to create an empty vector, and push each item to it individually.
 //
