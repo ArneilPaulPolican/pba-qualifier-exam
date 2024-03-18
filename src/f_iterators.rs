@@ -11,7 +11,7 @@
 /// This function takes an iterator of u32 values, squares each value, and returns the sum of the
 /// squares. You may assume that no individual square, nor the entire sum, overflows the u32 type.
 pub fn sum_of_squares(vals: impl Iterator<Item = u32>) -> u32 {
-	todo!()
+	vals.map(|n: u32| n * n).sum()
 }
 
 /// This function takes an iterator of i32 values, calculates the absolute value of each, and throws
@@ -20,7 +20,7 @@ pub fn sum_of_squares(vals: impl Iterator<Item = u32>) -> u32 {
 pub fn bounded_absolute_values(vals: impl Iterator<Item = i32>) -> impl Iterator<Item = u32> {
 	// You should remove the following line (and this comment). It is just there because the
 	// compiler doesn't allow todo!() when the return type is impl Trait
-	Vec::new().into_iter()
+    vals.map(|n| n.abs() as u32).filter(|&n| n <= 100)
 }
 
 // We allow `unused_mut` only so that there is no build warning on the starter code.
@@ -36,7 +36,11 @@ pub fn bounded_absolute_values(vals: impl Iterator<Item = i32>) -> impl Iterator
 pub fn first_n_even(mut vals: impl Iterator<Item = u32>) -> Option<impl Iterator<Item = u32>> {
 	// You should remove the following line (and this comment). It is just there because the
 	// compiler doesn't allow todo!() when the return type is impl Trait
-	Some(Vec::new().into_iter())
+	if let Some(n) = vals.next() {
+	    Some(vals.filter(|&x| x % 2 == 0).take(n as usize))
+	} else {
+	    None
+	}
 }
 
 /// Return an "infinite" iterator that yields the squares of the whole numbers.
@@ -46,7 +50,7 @@ pub fn first_n_even(mut vals: impl Iterator<Item = u32>) -> Option<impl Iterator
 pub fn square_whole_numbers() -> impl Iterator<Item = u32> {
 	// You should remove the following line (and this comment). It is just there because the
 	// compiler doesn't allow todo!() when the return type is impl Trait
-	Vec::new().into_iter()
+	(0..).map(|x| x * x)
 }
 
 /// An iterator that generates the Fibonacci sequence.
@@ -62,7 +66,19 @@ impl Iterator for Fibonacci {
 	type Item = u32;
 
 	fn next(&mut self) -> Option<u32> {
-		todo!()
+		match self.prev {
+			None => {
+				self.prev = Some(0);
+				self.prev_prev = Some(1);
+			}
+	        Some(prev) => {
+	            let new_prev_prev = prev.checked_add(self.prev_prev.unwrap())?;
+
+	            self.prev_prev = Some(prev);
+	            self.prev = Some(new_prev_prev);
+	        },
+	    }
+		self.prev
 	}
 }
 
